@@ -1,0 +1,78 @@
+---
+title: "Clustering"
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Basicly clustering is done with k-means method, set the number of clusters(k), uses Euclidean distance to calculate the distance between each point and the centroids, and then group the datapoints into different clusters based on the distances.
+
+When the variables are greater than 3 dimensions, Euclidean distance is not doing well, so we use the Hierachical clustering method to determine the number of clusters.
+
+The following is an example using Hierachical and k-means clustering methods to doing clustering, the dataset is mtcars from the R base.
+
+```{r mtcars}
+data(mtcars)
+mtcars_sub = mtcars[, c(1:5, 9:11)] # Select variables
+head(mtcars_sub, 5)
+```
+
+## Calculate the distance using Hierarchical method
+
+Create the clusters based on the hierarchical distance.
+
+```{r distance, echo=TRUE}
+d = dist(mtcars_sub)
+head(d, 10)
+```
+
+```{r cluster, echo=TRUE}
+c = hclust(d)
+head(c, 5)
+```
+
+## Plot the Hierarchical clusters
+```{r plot, echo=TRUE}
+plot(c)
+```
+
+## Define the number of clusters
+```{r group_multiple, echo=TRUE}
+group_multiple = cutree(c, k = 2:5)
+head(group_multiple, 5)
+```
+
+## Draw boxes around the clusters
+```{r hclust, echo=TRUE}
+plot(c)
+rect.hclust(c, k = 2, border = "gray")
+rect.hclust(c, k = 3, border = "blue")
+rect.hclust(c, k = 4, border = "green4")
+rect.hclust(c, k = 5, border = "darkred")
+```
+
+## Campare the K-means method
+```{r km, echo=TRUE}
+km = kmeans(mtcars_sub, 3)
+km
+```
+
+## Visurelize the clustering
+```{r vscluster, echo=TRUE}
+require(cluster)
+clusplot(mtcars_sub, km$cluster,
+         color = TRUE,
+         shade = TRUE,
+         lines = 3, 
+         labels = 2)
+```
+
+
+Based on the analysis we can see the reasonnable clustering using the two methods. 
